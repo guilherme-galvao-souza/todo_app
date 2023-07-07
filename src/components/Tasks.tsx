@@ -2,7 +2,7 @@ import { PlusCircle, Clipboard } from "phosphor-react"
 import { Task } from "./Task"
 import styles from './Tasks.module.css'
 
-import {useState} from 'react';
+import {useState , FormEvent , ChangeEvent} from 'react';
 
 interface Task{
   id:number;
@@ -11,7 +11,7 @@ interface Task{
 }
 
 export function Tasks(){
-  const [tasks,setTasks] = useState([]);
+  const [tasks,setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
   const [finishedTasksCounter,setFinishedTasksCounter] = useState(0);
 
@@ -27,9 +27,9 @@ export function Tasks(){
           Crie tarefas e organize seus itens a fazer
         </p>
       </div>)
-    }else{return (tasks.map((task)=>{
+    }else{return (tasks.map((task:Task)=>{
           return (
-          <Task 
+          <Task
             key={task.id} 
             taskId={task.id} 
             content={task.content} 
@@ -42,12 +42,13 @@ export function Tasks(){
     
   }
   
-  function handleNewTaskValue(event){
+  function handleNewTaskValue(event:ChangeEvent<HTMLInputElement>){
     setNewTask(event.target.value)
   }
 
+  
   const [id,setId] = useState(0);
-  function handleAddNewTask(event){
+  function handleAddNewTask(event : FormEvent){
     event.preventDefault();
     setTasks([...tasks,{id: id,content: newTask,isFinished:false}]);
     setId(id + 1);
@@ -55,7 +56,8 @@ export function Tasks(){
     handleFinishedTasksCounter(tasks);
   }
 
-  function handleDeleteTask(taskToBeDeleted){
+  function handleDeleteTask(taskToBeDeleted:any){
+    console.log(taskToBeDeleted)
     const taskIdToDelete = +taskToBeDeleted.currentTarget.parentNode.getAttribute('id');
     const currentTasksAdjusted = tasks.filter((task)=>{return task.id !== taskIdToDelete;});
     setTasks(currentTasksAdjusted);
@@ -64,7 +66,8 @@ export function Tasks(){
     
   }
 
-  function handleFinishedTask(e){
+  function handleFinishedTask(e:any){
+    console.log(e);
     const taskId = +e.currentTarget.parentNode.parentNode.getAttribute('id');
     const tasksFinishedAdjusted = tasks.map((task)=>{
       if(task.id === taskId){
@@ -78,8 +81,8 @@ export function Tasks(){
     
   }
 
-  function handleFinishedTasksCounter(taskArray){
-    const finishedTasksCounter = taskArray.reduce((acc,currentValue)=>{
+  function handleFinishedTasksCounter(taskArray:Task[]){
+    const finishedTasksCounter = taskArray.reduce((acc:number,currentValue:Task)=>{
       if(currentValue.isFinished === true){
         acc+=1
         return acc;
